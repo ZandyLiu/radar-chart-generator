@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from '../i18n';
 import { encodeState } from '../utils/shareUrl';
 import type { Snapshot } from '../types';
 
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default function EmbedCode({ exportState }: Props) {
+  const { t, lang } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -34,15 +36,15 @@ export default function EmbedCode({ exportState }: Props) {
 
   return (
     <div className="space-y-2">
-      <label className="text-sm text-gray-600 block">嵌入代码</label>
+      <label className="text-sm text-gray-600 block">{t.embedCode}</label>
       <p className="text-xs text-gray-400">
-        生成 iframe 代码，粘贴到你的网站中即可嵌入当前雷达图。
+        {lang === 'zh' ? '生成 iframe 代码，粘贴到你的网站中即可嵌入当前雷达图。' : 'Generate iframe code to embed the radar chart on your website.'}
       </p>
       <button
         onClick={handleCopy}
         className="w-full py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
       >
-        {copied ? '已复制!' : '复制嵌入代码'}
+        {copied ? t.copied : t.embedCode}
       </button>
     </div>
   );

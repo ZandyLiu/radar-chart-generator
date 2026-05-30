@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import type { Dimension, Series, ChartStyle, Snapshot } from '../types';
+import { useTranslation } from '../i18n';
 import DimensionEditor from './DimensionEditor';
 import SeriesEditor from './SeriesEditor';
 import { exportChart } from '../utils/export';
@@ -44,6 +45,7 @@ export default function ControlPanel({
   onSetScaleMin, onSetScaleMax, onUpdateChartStyle,
   onLoadPreset, onRestoreFromState, exportState, chartRef,
 }: Props) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'dimensions' | 'series' | 'settings'>('dimensions');
   const [exporting, setExporting] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -101,7 +103,7 @@ export default function ControlPanel({
           onRestoreFromState(state);
         }
       } catch {
-        alert('JSON 格式不正确');
+        alert(t.jsonError);
       }
     };
     reader.readAsText(file);
@@ -117,7 +119,6 @@ export default function ControlPanel({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback
       const input = document.createElement('input');
       input.value = url;
       document.body.appendChild(input);
@@ -136,7 +137,7 @@ export default function ControlPanel({
       setCsvText('');
       setShowCsv(false);
     } else {
-      alert('无法解析数据。请确保第一行为维度名，第一列为系列名。');
+      alert(t.csvParseError);
     }
   };
 
@@ -148,50 +149,52 @@ export default function ControlPanel({
   };
 
   const tabs = [
-    { key: 'dimensions' as const, label: '维度', count: dimensions.length },
-    { key: 'series' as const, label: '系列', count: series.length },
-    { key: 'settings' as const, label: '设置', count: undefined },
+    { key: 'dimensions' as const, label: t.dimensions, count: dimensions.length },
+    { key: 'series' as const, label: t.series, count: series.length },
+    { key: 'settings' as const, label: t.settings, count: undefined },
   ];
 
   return (
     <div className="lg:w-96 flex-shrink-0 space-y-4">
       {/* Presets */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">预设模板</h3>
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">{t.presets}</h3>
         <div className="flex flex-wrap gap-2">
-          {presets.map((p) => (
-            <button
-              key={p.name}
-              onClick={() => onLoadPreset(p.dimensions, p.series)}
-              className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-blue-50 hover:text-blue-600 rounded-full transition-colors"
-              title={p.description}
-            >
-              {p.name}
-            </button>
-          ))}
+          {presets.map((p) => {
+            const presetKey = p.name as keyof typeof t;
+            const presetName = t[presetKey] || p.name;
+            return (
+              <button
+                key={p.name}
+                onClick={() => onLoadPreset(p.dimensions, p.series)}
+                className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-blue-50 hover:text-blue-600 rounded-full transition-colors"
+                title={p.description}
+              >
+                {presetName}
+              </button>
+            );
+          })}
           <button
             onClick={() => setShowCsv(!showCsv)}
             className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-green-50 hover:text-green-600 rounded-full transition-colors"
           >
-            粘贴数据...
+            {t.pasteData}
           </button>
         </div>
         {showCsv && (
           <div className="mt-3 space-y-2">
-            <p className="text-xs text-gray-500">
-              粘贴 CSV 或 Tab 分隔的表格数据。第一行为维度名，第一列为系列名。
-            </p>
+            <p className="text-xs text-gray-500">{t.pasteDataDesc}</p>
             <textarea
               value={csvText}
               onChange={(e) => setCsvText(e.target.value)}
               className="w-full h-24 text-xs font-mono p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder={"维度一,维度二,维度三\n系列A,80,70,90\n系列B,60,85,75"}
+              placeholder={t.pasteDataPlaceholder}
             />
             <button
               onClick={handleCsvImport}
               className="w-full py-1.5 text-xs font-medium text-white bg-green-600 hover:bg-green-700 rounded transition-colors"
             >
-              导入数据
+              {t.importData}
             </button>
           </div>
         )}
@@ -225,7 +228,7 @@ export default function ControlPanel({
                 onClick={onAddDimension}
                 className="w-full py-2 text-sm text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
               >
-                + 添加维度
+                + {t.addDimension}
               </button>
               {dimensions.map((dim, i) => (
                 <DimensionEditor
@@ -255,12 +258,12 @@ export default function ControlPanel({
                 onClick={onAddSeries}
                 className="w-full py-2 text-sm text-blue-600 border border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
               >
-                + 添加系列
+                + {t.addSeries}
               </button>
 
               {/* Quick Palette */}
               <div>
-                <label className="text-xs text-gray-500 block mb-1.5">快速配色</label>
+                <label className="text-xs text-gray-500 block mb-1.5">{t.quickPalette}</label>
                 <div className="flex flex-wrap gap-1.5">
                   {palettes.map((p) => (
                     <button
@@ -299,24 +302,24 @@ export default function ControlPanel({
                   onClick={onUndo}
                   disabled={!canUndo}
                   className="flex-1 py-1.5 text-xs font-medium border border-gray-300 rounded hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                  title="撤销 (Ctrl+Z)"
+                  title={`${t.undo} (Ctrl+Z)`}
                 >
-                  ↩ 撤销
+                  ↩ {t.undo}
                 </button>
                 <button
                   onClick={onRedo}
                   disabled={!canRedo}
                   className="flex-1 py-1.5 text-xs font-medium border border-gray-300 rounded hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                  title="重做 (Ctrl+Shift+Z)"
+                  title={`${t.redo} (Ctrl+Shift+Z)`}
                 >
-                  ↪ 重做
+                  ↪ {t.redo}
                 </button>
               </div>
 
               {/* Scale */}
               <div>
                 <label className="text-sm text-gray-600 block mb-1">
-                  数值范围: {scaleMin} - {scaleMax}
+                  {t.scaleRange}: {scaleMin} - {scaleMax}
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -337,7 +340,7 @@ export default function ControlPanel({
 
               {/* Font */}
               <div>
-                <label className="text-sm text-gray-600 block mb-1">字体</label>
+                <label className="text-sm text-gray-600 block mb-1">{t.font}</label>
                 <select
                   value={chartStyle.fontFamily}
                   onChange={(e) => onUpdateChartStyle({ fontFamily: e.target.value })}
@@ -353,16 +356,16 @@ export default function ControlPanel({
 
               {/* Grid & Angle Line Style */}
               <div className="space-y-3">
-                <label className="text-sm text-gray-600 block">网格线样式</label>
+                <label className="text-sm text-gray-600 block">{t.gridStyle}</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
                     value={chartStyle.gridColor}
                     onChange={(e) => onUpdateChartStyle({ gridColor: e.target.value })}
                     className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
-                    title="网格线颜色"
+                    title={t.color}
                   />
-                  <span className="text-xs text-gray-500">颜色</span>
+                  <span className="text-xs text-gray-500">{t.color}</span>
                   <input
                     type="range"
                     min={0.5}
@@ -377,16 +380,16 @@ export default function ControlPanel({
               </div>
 
               <div className="space-y-3">
-                <label className="text-sm text-gray-600 block">轴线样式</label>
+                <label className="text-sm text-gray-600 block">{t.angleStyle}</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
                     value={chartStyle.angleLineColor}
                     onChange={(e) => onUpdateChartStyle({ angleLineColor: e.target.value })}
                     className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
-                    title="轴线颜色"
+                    title={t.color}
                   />
-                  <span className="text-xs text-gray-500">颜色</span>
+                  <span className="text-xs text-gray-500">{t.color}</span>
                   <input
                     type="range"
                     min={0.5}
@@ -402,7 +405,7 @@ export default function ControlPanel({
 
               {/* Chart Style */}
               <div className="space-y-2">
-                <label className="text-sm text-gray-600 block">图表选项</label>
+                <label className="text-sm text-gray-600 block">{t.chartOptions}</label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -410,7 +413,7 @@ export default function ControlPanel({
                     onChange={(e) => onUpdateChartStyle({ circular: e.target.checked })}
                     className="w-4 h-4 accent-blue-500"
                   />
-                  <span className="text-sm text-gray-700">圆形网格</span>
+                  <span className="text-sm text-gray-700">{t.circularGrid}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -419,7 +422,7 @@ export default function ControlPanel({
                     onChange={(e) => onUpdateChartStyle({ fillArea: e.target.checked })}
                     className="w-4 h-4 accent-blue-500"
                   />
-                  <span className="text-sm text-gray-700">填充面积</span>
+                  <span className="text-sm text-gray-700">{t.fillArea}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -428,37 +431,37 @@ export default function ControlPanel({
                     onChange={(e) => onUpdateChartStyle({ showPoints: e.target.checked })}
                     className="w-4 h-4 accent-blue-500"
                   />
-                  <span className="text-sm text-gray-700">显示数据点</span>
+                  <span className="text-sm text-gray-700">{t.showPoints}</span>
                 </label>
               </div>
 
               {/* Export buttons */}
               <div className="space-y-2">
-                <label className="text-sm text-gray-600 block">导出</label>
+                <label className="text-sm text-gray-600 block">{t.export}</label>
                 <button
                   onClick={handleExportPng}
                   disabled={exporting}
                   className="w-full py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50"
                 >
-                  {exporting ? '导出中...' : '导出为 PNG'}
+                  {exporting ? '...' : t.exportPng}
                 </button>
                 <button
                   onClick={handleExportSvg}
                   className="w-full py-2 text-sm font-medium text-blue-600 border border-blue-300 hover:bg-blue-50 rounded-lg transition-colors"
                 >
-                  导出为 SVG
+                  {t.exportSvg}
                 </button>
                 <button
                   onClick={handleExportJson}
                   className="w-full py-2 text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
                 >
-                  导出 JSON
+                  {t.exportJson}
                 </button>
                 <button
                   onClick={handleImportJson}
                   className="w-full py-2 text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
                 >
-                  导入 JSON
+                  {t.importJson}
                 </button>
                 <input
                   ref={fileInputRef}
@@ -471,12 +474,12 @@ export default function ControlPanel({
 
               {/* Share */}
               <div>
-                <label className="text-sm text-gray-600 block mb-1">分享</label>
+                <label className="text-sm text-gray-600 block mb-1">{t.share}</label>
                 <button
                   onClick={handleCopyLink}
                   className="w-full py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
                 >
-                  {copied ? '已复制!' : '复制分享链接'}
+                  {copied ? t.copied : t.copyLink}
                 </button>
               </div>
 

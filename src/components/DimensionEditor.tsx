@@ -1,3 +1,4 @@
+import { useTranslation } from '../i18n';
 import type { Dimension } from '../types';
 
 interface Props {
@@ -16,6 +17,7 @@ export default function DimensionEditor({
   dim, index, total, scaleMin, scaleMax,
   seriesValues, onLabelChange, onRemove, onValueChange,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="border border-gray-200 rounded-lg p-3 bg-white">
       <div className="flex items-center gap-2 mb-2">
@@ -25,13 +27,13 @@ export default function DimensionEditor({
           value={dim.label}
           onChange={(e) => onLabelChange(dim.id, e.target.value)}
           className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="维度名称"
+          placeholder={t.dimensionName}
         />
         {total > 3 && (
           <button
             onClick={() => onRemove(dim.id)}
             className="text-red-400 hover:text-red-600 text-lg leading-none px-1"
-            title="删除维度"
+            title={t.remove}
           >
             ×
           </button>

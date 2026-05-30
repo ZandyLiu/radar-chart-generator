@@ -1,3 +1,4 @@
+import { useTranslation } from '../i18n';
 import type { Series } from '../types';
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function SeriesEditor({ ser, onChange, onRemove, totalSeries }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="border border-gray-200 rounded-lg p-3 bg-white" style={{ borderLeftColor: ser.color, borderLeftWidth: 3 }}>
       <div className="flex items-center gap-2 mb-2">
@@ -19,7 +21,7 @@ export default function SeriesEditor({ ser, onChange, onRemove, totalSeries }: P
             onChange={(e) => onChange(ser.id, { color: e.target.value })}
             className="w-8 h-8 rounded cursor-pointer border border-gray-300 p-0 overflow-hidden"
             style={{ backgroundColor: 'transparent' }}
-            title="选择颜色"
+            title={t.color}
           />
         </div>
         <input
@@ -27,13 +29,13 @@ export default function SeriesEditor({ ser, onChange, onRemove, totalSeries }: P
           value={ser.name}
           onChange={(e) => onChange(ser.id, { name: e.target.value })}
           className="flex-1 px-2 py-1 text-sm font-medium border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="系列名称"
+          placeholder={t.seriesName}
         />
         {totalSeries > 1 && (
           <button
             onClick={() => onRemove(ser.id)}
             className="text-red-500 hover:text-red-700 text-xl leading-none px-2 py-1 rounded hover:bg-red-50 transition-colors"
-            title="删除系列"
+            title={t.remove}
           >
             ×
           </button>
@@ -41,7 +43,7 @@ export default function SeriesEditor({ ser, onChange, onRemove, totalSeries }: P
       </div>
       <div className="flex items-center gap-2">
         <label className="text-xs text-gray-500 whitespace-nowrap">
-          透明度
+          {t.transparency}
         </label>
         <input
           type="range"

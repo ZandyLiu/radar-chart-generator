@@ -6,13 +6,15 @@ import SiteLogo from './components/SiteLogo';
 import LegalModal from './components/LegalModal';
 import { decodeState, encodeState } from './utils/shareUrl';
 import { legalPages } from './data/legalContent';
+import { I18nProvider, useTranslation } from './i18n';
 
-export default function App() {
+function AppContent() {
   const chartRef = useRef<HTMLDivElement>(null);
   const chart = useChartData();
   const isEmbed = new URLSearchParams(window.location.search).has('embed');
   const restoredRef = useRef(false);
   const [modalPage, setModalPage] = useState<string | null>(null);
+  const { lang, t, setLang } = useTranslation();
 
   // Restore from URL hash on mount
   useEffect(() => {
@@ -58,7 +60,7 @@ export default function App() {
             chartRef={chartRef}
           />
           <p className="text-center text-xs text-gray-400 mt-2">
-            Powered by 雷达图生成器
+            Powered by {t.appName}
           </p>
         </div>
       </div>
@@ -69,8 +71,17 @@ export default function App() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <SiteLogo />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              title={lang === 'zh' ? 'Switch to English' : '切换到中文'}
+            >
+              {lang === 'zh' ? 'EN' : '中'}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -121,36 +132,16 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-gray-400 text-center sm:text-left">
-              <p>雷达图生成器 — 免费在线工具，支持多维度、多系列数据对比</p>
+              <p>{t.appName} — {t.footerDesc}</p>
               <p className="mt-1">
                 &copy; {new Date().getFullYear()} Radar Chart Generator. All rights reserved.
               </p>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
-              <button
-                onClick={() => openModal('privacy')}
-                className="text-gray-500 hover:text-blue-600 transition-colors"
-              >
-                隐私政策
-              </button>
-              <button
-                onClick={() => openModal('terms')}
-                className="text-gray-500 hover:text-blue-600 transition-colors"
-              >
-                服务条款
-              </button>
-              <button
-                onClick={() => openModal('about')}
-                className="text-gray-500 hover:text-blue-600 transition-colors"
-              >
-                关于我们
-              </button>
-              <button
-                onClick={() => openModal('contact')}
-                className="text-gray-500 hover:text-blue-600 transition-colors"
-              >
-                联系我们
-              </button>
+              <button onClick={() => openModal('privacy')} className="text-gray-500 hover:text-blue-600 transition-colors">{t.privacy}</button>
+              <button onClick={() => openModal('terms')} className="text-gray-500 hover:text-blue-600 transition-colors">{t.terms}</button>
+              <button onClick={() => openModal('about')} className="text-gray-500 hover:text-blue-600 transition-colors">{t.about}</button>
+              <button onClick={() => openModal('contact')} className="text-gray-500 hover:text-blue-600 transition-colors">{t.contact}</button>
             </div>
           </div>
         </div>
@@ -164,5 +155,13 @@ export default function App() {
         onClose={closeModal}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <I18nProvider>
+      <AppContent />
+    </I18nProvider>
   );
 }

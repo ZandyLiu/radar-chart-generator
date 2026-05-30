@@ -1,4 +1,7 @@
+import { useTranslation } from '../i18n';
+
 export default function SiteLogo() {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center gap-3">
       <div className="flex-shrink-0">
@@ -20,8 +23,8 @@ export default function SiteLogo() {
         </svg>
       </div>
       <div>
-        <h1 className="text-xl font-bold text-gray-800">雷达图生成器</h1>
-        <p className="text-xs text-gray-400">通用多维雷达图快速生成工具</p>
+        <h1 className="text-xl font-bold text-gray-800">{t.appName}</h1>
+        <p className="text-xs text-gray-400">{t.appDescription}</p>
       </div>
     </div>
   );
