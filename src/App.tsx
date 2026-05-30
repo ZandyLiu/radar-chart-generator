@@ -77,9 +77,9 @@ function AppContent() {
             <button
               onClick={() => setLang(lang === 'zh' ? 'en' : 'zh')}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              title={lang === 'zh' ? 'Switch to English' : '切换到中文'}
+              title={lang === 'zh' ? 'Switch to English' : 'Switch to Chinese'}
             >
-              {lang === 'zh' ? 'EN' : '中'}
+              {lang === 'zh' ? 'EN' : 'CN'}
             </button>
           </div>
         </div>

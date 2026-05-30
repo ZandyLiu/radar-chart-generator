@@ -48,4 +48,5 @@ export interface Translations {
   presetSports: string;
   presetProject: string;
   emptyChart: string;
+  embedDesc: string;
 }

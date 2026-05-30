@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function EmbedCode({ exportState }: Props) {
-  const { t, lang } = useTranslation();
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -38,7 +38,7 @@ export default function EmbedCode({ exportState }: Props) {
     <div className="space-y-2">
       <label className="text-sm text-gray-600 block">{t.embedCode}</label>
       <p className="text-xs text-gray-400">
-        {lang === 'zh' ? '生成 iframe 代码，粘贴到你的网站中即可嵌入当前雷达图。' : 'Generate iframe code to embed the radar chart on your website.'}
+        {t.embedDesc}
       </p>
       <button
         onClick={handleCopy}

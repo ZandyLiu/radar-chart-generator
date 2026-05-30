@@ -50,6 +50,7 @@ export const zh: Translations = {
   presetSports: '运动能力',
   presetProject: '项目评估',
   emptyChart: '请至少添加一个维度',
+  embedDesc: '生成 iframe 代码，粘贴到你的网站中即可嵌入当前雷达图。',
 };
 
 export const en: Translations = {
@@ -102,4 +103,5 @@ export const en: Translations = {
   presetSports: 'Sports Ability',
   presetProject: 'Project Evaluation',
   emptyChart: 'Please add at least one dimension',
+  embedDesc: 'Generate iframe code to embed the radar chart on your website.',
 };
