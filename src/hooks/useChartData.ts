@@ -9,11 +9,11 @@ function uid(): string {
 const DEFAULT_COLORS = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#F97316'];
 
 const DEFAULT_DIMENSIONS: Dimension[] = [
-  { id: uid(), label: '维度一' },
-  { id: uid(), label: '维度二' },
-  { id: uid(), label: '维度三' },
-  { id: uid(), label: '维度四' },
-  { id: uid(), label: '维度五' },
+  { id: uid(), label: 'Dimension 1' },
+  { id: uid(), label: 'Dimension 2' },
+  { id: uid(), label: 'Dimension 3' },
+  { id: uid(), label: 'Dimension 4' },
+  { id: uid(), label: 'Dimension 5' },
 ];
 
 const DEFAULT_STYLE: ChartStyle = {
@@ -32,7 +32,7 @@ function makeDefaultSeries(dimensions: Dimension[], index: number): Series {
   dimensions.forEach((d) => { values[d.id] = 70; });
   return {
     id: uid(),
-    name: `系列 ${index + 1}`,
+    name: `Series ${index + 1}`,
     color: DEFAULT_COLORS[index % DEFAULT_COLORS.length],
     fillOpacity: 0.2,
     values,
@@ -156,7 +156,7 @@ export function useChartData() {
 
   const addDimension = useCallback(() => {
     pushHistory();
-    const dim: Dimension = { id: uid(), label: `维度${dimensions.length + 1}` };
+    const dim: Dimension = { id: uid(), label: `Dimension ${dimensions.length + 1}` };
     setDimensions((prev) => [...prev, dim]);
     setSeries((prev) =>
       prev.map((ser) => ({ ...ser, values: { ...ser.values, [dim.id]: 50 } }))

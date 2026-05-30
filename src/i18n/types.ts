@@ -47,4 +47,5 @@ export interface Translations {
   presetProduct: string;
   presetSports: string;
   presetProject: string;
+  emptyChart: string;
 }

@@ -49,6 +49,7 @@ export const zh: Translations = {
   presetProduct: '产品对比',
   presetSports: '运动能力',
   presetProject: '项目评估',
+  emptyChart: '请至少添加一个维度',
 };
 
 export const en: Translations = {
@@ -100,4 +101,5 @@ export const en: Translations = {
   presetProduct: 'Product Comparison',
   presetSports: 'Sports Ability',
   presetProject: 'Project Evaluation',
+  emptyChart: 'Please add at least one dimension',
 };

@@ -161,8 +161,13 @@ export default function ControlPanel({
         <h3 className="text-sm font-semibold text-gray-700 mb-3">{t.presets}</h3>
         <div className="flex flex-wrap gap-2">
           {presets.map((p) => {
-            const presetKey = p.name as keyof typeof t;
-            const presetName = t[presetKey] || p.name;
+            const presetNameMap: Record<string, string> = {
+              'Ability Assessment': t.presetAbility,
+              'Product Comparison': t.presetProduct,
+              'Sports Ability': t.presetSports,
+              'Project Evaluation': t.presetProject,
+            };
+            const presetName = presetNameMap[p.name] || p.name;
             return (
               <button
                 key={p.name}

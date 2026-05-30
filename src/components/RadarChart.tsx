@@ -8,6 +8,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
+import { useTranslation } from '../i18n';
 import type { Dimension, Series, ChartStyle } from '../types';
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export default function RadarChart({ dimensions, series, scaleMin, scaleMax, chartStyle, chartRef }: Props) {
+  const { t } = useTranslation();
   const labels = dimensions.map((d) => d.label);
 
   const datasets = series.map((ser) => {
@@ -91,7 +93,7 @@ export default function RadarChart({ dimensions, series, scaleMin, scaleMax, cha
   if (dimensions.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-gray-400 text-sm">
-        请至少添加一个维度
+        {t.emptyChart}
       </div>
     );
   }
